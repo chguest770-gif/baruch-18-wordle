@@ -58,4 +58,55 @@ function submitGuess() {
     if (row === 6) {
         document.getElementById("message").textContent = "💥 Oops… Better wait for the gift!";
     }
+}const KEYS = [
+    ..."QWERTYUIOP",
+    ..."ASDFGHJKL",
+    ..."ZXCVBNM"
+];
+
+function buildKeyboard() {
+    const kb = document.getElementById("keyboard");
+    KEYS.forEach(k => {
+        let btn = document.createElement("button");
+        btn.textContent = k;
+        btn.classList.add("key");
+        btn.onclick = () => simulateKey(k);
+        kb.appendChild(btn);
+    });
+
+    let enter = document.createElement("button");
+    enter.textContent = "Enter";
+    enter.classList.add("key", "special");
+    enter.onclick = () => simulateKey("ENTER");
+
+    let back = document.createElement("button");
+    back.textContent = "⌫";
+    back.classList.add("key", "special");
+    back.onclick = () => simulateKey("BACKSPACE");
+
+    kb.appendChild(enter);
+    kb.appendChild(back);
 }
+
+function simulateKey(k) {
+    if (k === "ENTER") {
+        if (col === 6) submitGuess();
+        return;
+    }
+    if (k === "BACKSPACE") {
+        if (col > 0) {
+            col--;
+            guesses[row] = guesses[row].slice(0, -1);
+            document.getElementById(`tile-${row}-${col}`).textContent = "";
+        }
+        return;
+    }
+    if (/^[A-Z]$/.test(k) && col < 6) {
+        guesses[row] += k;
+        document.getElementById(`tile-${row}-${col}`).textContent = k;
+        col++;
+    }
+}
+
+buildKeyboard();
+
